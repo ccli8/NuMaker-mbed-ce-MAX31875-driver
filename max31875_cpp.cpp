@@ -31,26 +31,29 @@
 *******************************************************************************
 */
 #include "max31875.h"
+#include "max31875_cpp.h"
 #include "mbed.h" 
 // #include "USBSerial.h"
 
+/******************************************************************************
+ *  C++ version for MAX31875 driver                                           *
+ ******************************************************************************
+ */
 
 /******************************************************************************/
-MAX31875::MAX31875(I2C &i2c_bus, uint8_t slaveAddress):
+MAX31875::MAX31875(I2C &i2c_bus, uint8_t slave_address):
 m_i2c(i2c_bus), 
-m_writeAddress(slaveAddress <<1),
-m_readAddress ((slaveAddress << 1) | 1),
+m_write_address(slave_address <<1),
+m_read_address ((slave_address << 1) | 1),
 m_extended_format(0)
 {
 }
- 
  
 /******************************************************************************/
 MAX31875::~MAX31875(void) 
 {
   /** empty block */
 }
- 
 
 /******************************************************************************/
 int MAX31875::read_reg(uint16_t *value, char reg) 
@@ -61,10 +64,10 @@ int MAX31875::read_reg(uint16_t *value, char reg)
      
     if (reg <= MAX31875_REG_MAX) {
         /* write to the Register Select */
-        ret = m_i2c.write(m_writeAddress, &reg, 1, true);
+        ret = m_i2c.write(m_write_address, &reg, 1, true);
         /* read the two bytes of data */
         if (ret == 0) {
-            ret = m_i2c.read(m_readAddress, data, 2, false);
+            ret = m_i2c.read(m_read_address, data, 2, false);
             if (ret == 0) {
                 tmp.msb = data[0];  /* MSB */
                 tmp.lsb = data[1];  /* LSB */
@@ -85,7 +88,7 @@ int MAX31875::read_reg(uint16_t *value, char reg)
     return MAX31875_ERROR;
 }
 
-
+/******************************************************************************/
 float MAX31875::read_reg_as_temperature(uint8_t reg)
 {
     max31875_raw_data tmp;
@@ -105,7 +108,6 @@ float MAX31875::read_reg_as_temperature(uint8_t reg)
     }
 }
 
-
 /******************************************************************************/
 int MAX31875::write_reg(uint16_t value, char reg) 
 {
@@ -118,7 +120,7 @@ int MAX31875::write_reg(uint16_t value, char reg)
         tmp.uwrd = value;
         cmd[1] = tmp.msb;
         cmd[2] = tmp.lsb;
-        ret = m_i2c.write(m_writeAddress, cmd, 3, false);
+        ret = m_i2c.write(m_write_address, cmd, 3, false);
         if (ret == 0) {
             if (tmp.uwrd & MAX31875_CFG_EXTENDED_FORMAT)
                 m_extended_format = 1;
@@ -135,13 +137,13 @@ int MAX31875::write_reg(uint16_t value, char reg)
     }
 }
 
-
+/******************************************************************************/
 int MAX31875::write_cfg(uint16_t cfg)
 {
     return write_reg(cfg, MAX31875_REG_CONFIGURATION);
 }
 
-
+/******************************************************************************/
 int MAX31875::write_trip_low(float temperature)
 {
     max31875_raw_data raw;
@@ -153,7 +155,7 @@ int MAX31875::write_trip_low(float temperature)
     return write_reg(raw.uwrd, MAX31875_REG_THYST);
 }
 
-
+/******************************************************************************/
 int MAX31875::write_trip_high(float temperature)
 {
     max31875_raw_data raw;
@@ -165,7 +167,7 @@ int MAX31875::write_trip_high(float temperature)
     return write_reg(raw.uwrd, MAX31875_REG_TOS);
 }
 
-
+/******************************************************************************/
 float MAX31875::celsius_to_fahrenheit(float temp_c)
 {
     float temp_f;

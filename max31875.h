@@ -91,157 +91,17 @@
 #define MAX31875_CF_NORMAL_FORMAT (0.00390625F)
 #define MAX31875_CF_EXTENDED_FORMAT (0.0078125F)
 
-/**
- * @brief Extremely small low-power temperature sensor.
- * @version 1.0000.0000
- *
- * @details The MAX31875 is a small WLP package temperature sensor.
- * It supports high, low triggers stored in EEPROM for hystersis
- * or limit alarms using comparator or interrupt mode.
- * The MAX31875 can operate in shutdown and one-shot mode for
- * extremely low power applications.
- * Tiny size of 0.84 x 0.84 x 0.35 mm.
- * Accuracy is +-1.5°C from +10°C to +45°C  (±0.5°C Typical),
- *             +-2.0°C from -10°C to +100°C (±0.6°C Typical),
- *             +-3.0°C from -20°C to +125°C (±1.0°C Typical),
- * I2C data rate of up to 1 MHz.
- *
- * @code 
- * #include "mbed.h"
- * #include "max32630fthr.h"
- * #include "max31875.h"
- * #include "USBSerial.h"
- * MAX32630FTHR pegasus(MAX32630FTHR::VIO_1V8); 
- * I2C i2cBus(P3_4, P3_5);
- * int main()
- * {
- *     uint16_t raw;
- *     float temperature;
- *     DigitalOut rLED(LED1, LED_OFF);
- *     DigitalOut gLED(LED2, LED_OFF);
- *     DigitalOut bLED(LED3, LED_OFF);
- *     gLED = LED_ON;
- *     MAX31875 temp_sensor(i2cBus, MAX31875_I2C_SLAVE_ADR_R0);
- *    i2cBus.frequency(1000000);
- *    temp_sensor.write_reg(uint16_t(MAX31875_CFG_CONV_RATE_8 | 
- *        MAX31875_CFG_RESOLUTION_12BIT), MAX31875_REG_CONFIGURATION);
- *    wait(MAX31875_WAIT_CONV_RATE_8);
- *     temperature = temp_sensor.read_reg_as_temperature(MAX31875_REG_TEMPERATURE);
- *     printf("Temperature = %3.4f Celsius, %3.4f Fahrenheit\r\n", 
- *             temperature, temp_sensor.celsius_to_fahrenheit(temperature));
- * }
- * @endcode
+/** @union max31875_raw_data
+ * @brief union data structure for byte word manipulations
  */
-
-class MAX31875
-{
-    public:
-
-    /**********************************************************//**
-     * @brief Constructor for MAX31875 Class.  
-     * 
-     * @details Allows user to use existing I2C object
-     *
-     * On Entry:
-     *     @param[in] i2c_bus - pointer to existing I2C object
-     *     @param[in] i2c_adrs - 7-bit slave address of MAX31875
-     *
-     * On Exit:
-     *
-     * @return None
-     **************************************************************/
-    MAX31875(I2C &i2c_bus, uint8_t slaveAddress);
- 
-    /**********************************************************//**
-     * @brief Default destructor for MAX31875 Class.  
-     *
-     * @details Destroys I2C object if owner 
-     *
-     * On Entry:
-     *
-     * On Exit:
-     *
-     * @return None
-     **************************************************************/
-    ~MAX31875();
-
-    /**
-     * @brief  Read register of device at slave address
-     * @param[out] value - Read data on success
-     * @param reg - Register address
-     * @return 0 on success, negative number on failure
-     */
-    int read_reg(uint16_t *value, char reg);
-
-    /** 
-     * @brief Reads the temperature registers
-     * @param reg - the address of the temperature register
-     * @return temprature in degrees Celsius
-     */
-    float read_reg_as_temperature(uint8_t reg);
-
-    /** 
-     * @brief Writes to the configuration register
-     * @param cfg - configurate word
-     * @return 0 on success, negative number on failure
-     */
-     int write_cfg(uint16_t cfg);
-
-    /** 
-     * @brief Writes to the THYST register
-     * @param temperature - the temperature in Celsius degrees
-     * @return 0 on success, negative number on failure
-     */
-     int write_trip_low(float temperature);
-
-    /** 
-     * @brief Writes to the TOS register
-     * @param temperature - the temperature in Celsius degrees
-     * @return 0 on success, negative number on failure
-     */
-     int write_trip_high(float temperature);
-
-    /** 
-     * @brief Converts Celsius degrees to Fahrenheit
-     * @param temp_c - the temperature in Celsius degrees
-     * @return temperature in Celsius degrees
-     */
-     float celsius_to_fahrenheit(float temp_c);
-
-protected: 
-    /** @union max31875_raw_data
-     * @brief union data structure for byte word manipulations
-     */
-    union max31875_raw_data {
-        struct {
-            uint8_t lsb;
-            uint8_t msb;
-        };
-        uint16_t uwrd;
-        int16_t swrd;
+union max31875_raw_data {
+    struct {
+        uint8_t lsb;
+        uint8_t msb;
     };
-
-    /** 
-     * @brief Write a value to a register
-     * @param value - value to write to the register
-     * @param reg - register address
-     * @return 0 on success, negative number on failure
-     */
-    int write_reg(uint16_t value, char reg);
-
-private:
-    /** @var m_i2c
-     * @brief I2C object
-     */
-    I2C &m_i2c;
-    /** @var m_writeAddress, m_readAddress
-     * @brief I2C address
-     */
-    uint8_t m_writeAddress, m_readAddress;
-    /** @var m_writeAddress, m_readAddress
-     * @brief m_extended_format
-     */
-    uint32_t m_extended_format;
+    uint16_t uwrd;
+    int16_t swrd;
 };
+
  
 #endif/* MAX31875_H */
