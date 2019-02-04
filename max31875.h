@@ -209,7 +209,9 @@ class MAX31875
      float celsius_to_fahrenheit(float temp_c);
 
 protected: 
-    /** union data structure for byte word manipulations */
+    /** @union max31875_raw_data
+     * @brief union data structure for byte word manipulations
+     */
     union max31875_raw_data {
         struct {
             uint8_t lsb;
@@ -228,11 +230,17 @@ protected:
     int write_reg(uint16_t value, char reg);
 
 private:
-    /** I2C object */
+    /** @var m_i2c
+     * @brief I2C object
+     */
     I2C &m_i2c;
-    /** Device slave addresses */
+    /** @var m_writeAddress, m_readAddress
+     * @brief I2C address
+     */
     uint8_t m_writeAddress, m_readAddress;
-    /** Extended Data Format flag. */
+    /** @var m_writeAddress, m_readAddress
+     * @brief m_extended_format
+     */
     uint32_t m_extended_format;
 };
  
