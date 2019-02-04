@@ -181,27 +181,30 @@ class MAX31875
     float read_reg_as_temperature(uint8_t reg);
 
     /** 
-     * @brief Writes the configuration register
+     * @brief Writes to the configuration register
+     * @param cfg - configurate word
      * @return 0 on success, negative number on failure
      */
      int write_cfg(uint16_t cfg);
 
     /** 
-     * @brief Writes the THYST register
+     * @brief Writes to the THYST register
+     * @param temperature - the temperature in Celsius degrees
      * @return 0 on success, negative number on failure
      */
      int write_trip_low(float temperature);
 
     /** 
-     * @brief Writes the TOS register
+     * @brief Writes to the TOS register
+     * @param temperature - the temperature in Celsius degrees
      * @return 0 on success, negative number on failure
      */
      int write_trip_high(float temperature);
 
     /** 
-     * @brief Converts Celcius degrees to Fahrenheit
+     * @brief Converts Celsius degrees to Fahrenheit
      * @param temp_c - the temperature in Celsius degrees
-     * @return 0 on success, negative number on failure
+     * @return temperature in Celsius degrees
      */
      float celsius_to_fahrenheit(float temp_c);
 
