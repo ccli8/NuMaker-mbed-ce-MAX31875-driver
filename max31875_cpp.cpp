@@ -96,9 +96,7 @@ float MAX31875::read_reg_as_temperature(uint8_t reg)
     if (reg == MAX31875_REG_TEMPERATURE ||
         reg == MAX31875_REG_THYST_LOW_TRIP || reg == MAX31875_REG_TOS_HIGH_TRIP) {
         read_reg(&tmp.uwrd, reg);
-//printf("RD %02x %02x exted fmt %d \n\r", tmp.msb, tmp.lsb, m_extended_format);
         temperature = (float)tmp.magnitude_bits;
-//printf("RD temp %d \n\r", temperature);
         if (m_extended_format)
             temperature *= MAX31875_CF_EXTENDED_FORMAT;
         else

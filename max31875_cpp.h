@@ -122,7 +122,7 @@ class MAX31875
     /** 
      * @brief Reads the temperature registers
      * @param reg - the address of the temperature register
-     * @return temprature in degrees Celsius
+     * @return temperature in degrees Celsius
      */
     float read_reg_as_temperature(uint8_t reg);
 
