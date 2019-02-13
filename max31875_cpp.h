@@ -39,7 +39,7 @@
 
 /**
  * @brief Extremely small low-power temperature sensor.
- * @version 1.0000.0001
+ * @version 1.0000.0002
  *
  * @details The MAX31875 is a small WLP package temperature sensor.
  * It supports high, low triggers stored in EEPROM for hystersis

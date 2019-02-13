@@ -44,9 +44,9 @@
 MAX31875::MAX31875(I2C &i2c_bus, uint8_t slave_address):
 m_i2c(i2c_bus), 
 m_write_address(slave_address <<1),
-m_read_address ((slave_address << 1) | 1),
-m_extended_format(0)
+m_read_address ((slave_address << 1) | 1)
 {
+    m_extended_format = 0;
 }
  
 /******************************************************************************/
@@ -69,9 +69,9 @@ int MAX31875::read_reg(uint16_t *value, char reg)
         if (ret == 0) {
             ret = m_i2c.read(m_read_address, data, 2, false);
             if (ret == 0) {
-                tmp.msb = data[0];  /* MSB */
-                tmp.lsb = data[1];  /* LSB */
-                *value = tmp.swrd;
+                tmp.msb = data[0];
+                tmp.lsb = data[1];
+                *value = tmp.uwrd;
                 return MAX31875_NO_ERROR;
             } else {
                 printf(
@@ -94,14 +94,19 @@ float MAX31875::read_reg_as_temperature(uint8_t reg)
     max31875_raw_data tmp;
     float temperature;
     if (reg == MAX31875_REG_TEMPERATURE ||
-        reg == MAX31875_REG_THYST || reg == MAX31875_REG_TOS) {
+        reg == MAX31875_REG_THYST_LOW_TRIP || reg == MAX31875_REG_TOS_HIGH_TRIP) {
         read_reg(&tmp.uwrd, reg);
-        temperature = (float)tmp.swrd;
+//printf("RD %02x %02x exted fmt %d \n\r", tmp.msb, tmp.lsb, m_extended_format);
+        temperature = (float)tmp.magnitude_bits;
+//printf("RD temp %d \n\r", temperature);
         if (m_extended_format)
             temperature *= MAX31875_CF_EXTENDED_FORMAT;
         else
             temperature *= MAX31875_CF_NORMAL_FORMAT;
+        if (tmp.sign_bit)
+            temperature = -temperature;
         return temperature;
+        
     } else {
         printf("%s: register is invalid, %d r\n", __func__, reg);
         return 0;
@@ -122,10 +127,11 @@ int MAX31875::write_reg(uint16_t value, char reg)
         cmd[2] = tmp.lsb;
         ret = m_i2c.write(m_write_address, cmd, 3, false);
         if (ret == 0) {
-            if (tmp.uwrd & MAX31875_CFG_EXTENDED_FORMAT)
-                m_extended_format = 1;
-            else 
+            if (MAX31875_REG_CONFIGURATION == reg) {
                 m_extended_format = 0;
+                if (tmp.uwrd & MAX31875_CFG_EXTENDED_FORMAT)
+                    m_extended_format = 1;
+            }
             return MAX31875_NO_ERROR;
         } else {
             printf("%s: I2C write error %d\r\n",__func__, ret);
@@ -147,24 +153,32 @@ int MAX31875::write_cfg(uint16_t cfg)
 int MAX31875::write_trip_low(float temperature)
 {
     max31875_raw_data raw;
+    if (temperature < 0) {
+        raw.sign_bit = 1;
+        temperature = -temperature;
+    }
     if (m_extended_format)
         temperature /= MAX31875_CF_EXTENDED_FORMAT;
     else
         temperature /= MAX31875_CF_NORMAL_FORMAT;
-    raw.uwrd = uint16_t(temperature);
-    return write_reg(raw.uwrd, MAX31875_REG_THYST);
+    raw.magnitude_bits= uint16_t(temperature);
+    return write_reg(raw.uwrd, MAX31875_REG_THYST_LOW_TRIP);
 }
 
 /******************************************************************************/
 int MAX31875::write_trip_high(float temperature)
 {
     max31875_raw_data raw;
+    if (temperature < 0) {
+        raw.sign_bit = 1;
+        temperature = -temperature;
+    }
     if (m_extended_format)
         temperature /= MAX31875_CF_EXTENDED_FORMAT;
     else
         temperature /= MAX31875_CF_NORMAL_FORMAT;
-    raw.uwrd = uint16_t(temperature);
-    return write_reg(raw.uwrd, MAX31875_REG_TOS);
+    raw.magnitude_bits= uint16_t(temperature);
+    return write_reg(raw.uwrd, MAX31875_REG_TOS_HIGH_TRIP);
 }
 
 /******************************************************************************/

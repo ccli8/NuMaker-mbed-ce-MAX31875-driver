@@ -39,11 +39,11 @@
 #define MAX31875_NO_ERROR   0
 #define MAX31875_ERROR      -1
 
-#define MAX31875_REG_TEMPERATURE   0X00
-#define MAX31875_REG_CONFIGURATION 0X01
-#define MAX31875_REG_THYST         0X02
-#define MAX31875_REG_TOS           0X03
-#define MAX31875_REG_MAX           0X03
+#define MAX31875_REG_TEMPERATURE      0X00
+#define MAX31875_REG_CONFIGURATION    0X01
+#define MAX31875_REG_THYST_LOW_TRIP   0X02 
+#define MAX31875_REG_TOS_HIGH_TRIP    0X03 
+#define MAX31875_REG_MAX              0X03
 
 #define MAX31875_CFG_ONE_SHOT_START   (1) /* Start one-shot measurement */
 
@@ -51,7 +51,7 @@
 #define MAX31875_CFG_CONV_RATE_1      (0x01 << 1) /* 1.0 conversions/sec */
 #define MAX31875_CFG_CONV_RATE_4      (0x02 << 1) /* 4.0 conversions/sec */
 #define MAX31875_CFG_CONV_RATE_8      (0x03 << 1) /* 8.0 conversions/sec */
-#define MAX31875_WAIT_CONV_RATE_0_25 (4.0)
+#define MAX31875_WAIT_CONV_RATE_0_25 (4.002)
 #define MAX31875_WAIT_CONV_RATE_1    (1.0)
 #define MAX31875_WAIT_CONV_RATE_4    (0.25)
 #define MAX31875_WAIT_CONV_RATE_8    (0.125)
@@ -99,9 +99,15 @@ union max31875_raw_data {
         uint8_t lsb;
         uint8_t msb;
     };
+    struct {
+        uint16_t magnitude_bits:15;
+        uint16_t sign_bit:1;
+    };
     uint16_t uwrd;
     int16_t swrd;
 };
+#define MAX31875_U16_MAX     ((uint16_t)~0U)
+#define MAX31875_S16_MAX     ((int16_t)(MAX31875_U16_MAX>>1))
+#define MAX31875_S16_MIN     ((int16_t)(-MAX31875_S16_MAX - 1))
 
- 
 #endif/* MAX31875_H */
