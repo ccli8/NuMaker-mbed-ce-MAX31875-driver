@@ -151,6 +151,7 @@ int MAX31875::write_cfg(uint16_t cfg)
 int MAX31875::write_trip_low(float temperature)
 {
     max31875_raw_data raw;
+    raw.uwrd = 0;
     if (temperature < 0) {
         raw.sign_bit = 1;
         temperature = -temperature;
@@ -159,7 +160,7 @@ int MAX31875::write_trip_low(float temperature)
         temperature /= MAX31875_CF_EXTENDED_FORMAT;
     else
         temperature /= MAX31875_CF_NORMAL_FORMAT;
-    raw.magnitude_bits= uint16_t(temperature);
+    raw.magnitude_bits = uint16_t(temperature);
     return write_reg(raw.uwrd, MAX31875_REG_THYST_LOW_TRIP);
 }
 
@@ -167,6 +168,7 @@ int MAX31875::write_trip_low(float temperature)
 int MAX31875::write_trip_high(float temperature)
 {
     max31875_raw_data raw;
+    raw.uwrd = 0;
     if (temperature < 0) {
         raw.sign_bit = 1;
         temperature = -temperature;
@@ -175,7 +177,7 @@ int MAX31875::write_trip_high(float temperature)
         temperature /= MAX31875_CF_EXTENDED_FORMAT;
     else
         temperature /= MAX31875_CF_NORMAL_FORMAT;
-    raw.magnitude_bits= uint16_t(temperature);
+    raw.magnitude_bits = uint16_t(temperature);
     return write_reg(raw.uwrd, MAX31875_REG_TOS_HIGH_TRIP);
 }
 

@@ -155,6 +155,7 @@ int max31875_write_cfg(uint16_t cfg, I2C &i2c_bus)
 int max31875_write_trip_low(float temperature, I2C &i2c_bus)
 {
     max31875_raw_data raw;
+    raw.uwrd = 0;
     if (temperature < 0) {
         raw.sign_bit = 1;
         temperature = -temperature;
@@ -163,7 +164,7 @@ int max31875_write_trip_low(float temperature, I2C &i2c_bus)
         temperature /= MAX31875_CF_EXTENDED_FORMAT;
     else
         temperature /= MAX31875_CF_NORMAL_FORMAT;
-    raw.magnitude_bits= uint16_t(temperature);
+    raw.magnitude_bits = uint16_t(temperature);
     return max31875_write_reg(raw.uwrd, MAX31875_REG_THYST_LOW_TRIP, i2c_bus);
 }
 
@@ -171,6 +172,7 @@ int max31875_write_trip_low(float temperature, I2C &i2c_bus)
 int max31875_write_trip_high(float temperature, I2C &i2c_bus)
 {
     max31875_raw_data raw;
+    raw.uwrd = 0;
     if (temperature < 0) {
         raw.sign_bit = 1;
         temperature = -temperature;
@@ -179,7 +181,7 @@ int max31875_write_trip_high(float temperature, I2C &i2c_bus)
         temperature /= MAX31875_CF_EXTENDED_FORMAT;
     else
         temperature /= MAX31875_CF_NORMAL_FORMAT;
-    raw.magnitude_bits= uint16_t(temperature);
+    raw.magnitude_bits = uint16_t(temperature);
     return max31875_write_reg(raw.uwrd, MAX31875_REG_TOS_HIGH_TRIP, i2c_bus);
 }
 
