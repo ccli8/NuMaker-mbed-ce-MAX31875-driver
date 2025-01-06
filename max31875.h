@@ -36,6 +36,8 @@
 #define MAX31875_H
 #include "mbed.h"
 
+namespace mbed_nuvoton {
+    
 #define MAX31875_NO_ERROR   0
 #define MAX31875_ERROR      -1
 
@@ -109,5 +111,7 @@ union max31875_raw_data {
 #define MAX31875_U16_MAX     ((uint16_t)~0U)
 #define MAX31875_S16_MAX     ((int16_t)(MAX31875_U16_MAX>>1))
 #define MAX31875_S16_MIN     ((int16_t)(-MAX31875_S16_MAX - 1))
+
+}   /* namespace mbed_nuvoton */
 
 #endif/* MAX31875_H */

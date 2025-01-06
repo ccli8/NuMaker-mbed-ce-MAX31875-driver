@@ -35,18 +35,21 @@
 #include "mbed.h" 
 // #include "USBSerial.h"
 
+namespace mbed_nuvoton {
+    
 /******************************************************************************
  *  C++ version for MAX31875 driver                                           *
  ******************************************************************************
  */
 
 /******************************************************************************/
-MAX31875::MAX31875(I2C &i2c_bus, uint8_t slave_address):
-m_i2c(i2c_bus), 
-m_write_address(slave_address <<1),
-m_read_address ((slave_address << 1) | 1)
+MAX31875::MAX31875(PinName sda, PinName scl, int address, int hz):
+m_i2c(sda, scl),
+m_write_address(address <<1),
+m_read_address ((address << 1) | 1)
 {
     m_extended_format = 0;
+    m_i2c.frequency(hz);
 }
  
 /******************************************************************************/
@@ -188,3 +191,5 @@ float MAX31875::celsius_to_fahrenheit(float temp_c)
     temp_f = ((temp_c * 9)/5) + 32;
     return temp_f;
 }
+
+}   /* namespace mbed_nuvoton */

@@ -35,6 +35,9 @@
 #ifndef MAX31875_C_H
 #define MAX31875_C_H
 #include "mbed.h"
+
+namespace mbed_nuvoton {
+    
 /*****************************************************************************/
 /*  C header for MAX31875 driver                                             */
 /*****************************************************************************/
@@ -54,5 +57,7 @@ int max31875_write_trip_low(float temperature, I2C &i2c_bus);
 int max31875_write_trip_high(float temperature, I2C &i2c_bus);
 
 float max31875_celsius_to_fahrenheit(float temp_c);
+
+}   /* namespace mbed_nuvoton */
 
 #endif/* MAX31875_C_H */

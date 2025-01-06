@@ -35,7 +35,8 @@
 #include "mbed.h" 
 // #include "USBSerial.h"
 
-
+namespace mbed_nuvoton {
+    
 /******************************************************************************/
 /*  C version for MAX31875 driver                                             */
 /******************************************************************************/
@@ -192,3 +193,5 @@ float max31875_celsius_to_fahrenheit(float temp_c)
     temp_f = ((temp_c * 9)/5) + 32;
     return temp_f;
 }
+
+}   /* namespace mbed_nuvoton */

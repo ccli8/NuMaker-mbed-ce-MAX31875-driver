@@ -36,7 +36,8 @@
 #define MAX31875_CPP_H
 #include "mbed.h"
 
-
+namespace mbed_nuvoton {
+    
 /**
  * @brief Extremely small low-power temperature sensor.
  * @version 1.0000.0003
@@ -96,7 +97,7 @@ class MAX31875
      *
      * @return None
      **************************************************************/
-    MAX31875(I2C &i2c_bus, uint8_t slave_address);
+    MAX31875(PinName sda, PinName scl, int address = MAX31875_I2C_SLAVE_ADR_R0, int hz = 100000);
  
     /**********************************************************//**
      * @brief Default destructor for MAX31875 Class.  
@@ -167,7 +168,7 @@ private:
     /** @var m_i2c
      * @brief I2C object
      */
-    I2C &m_i2c;
+    I2C m_i2c;
     /** @var m_write_address, m_read_address
      * @brief I2C address
      */
@@ -177,5 +178,7 @@ private:
      */
     uint32_t m_extended_format;
 };
+
+}   /* namespace mbed_nuvoton */
 
 #endif/* MAX31875_CPP_H */
